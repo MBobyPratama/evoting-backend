@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('votes', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('candidate_id')->constrained('candidates');
-            $table->foreignUuid('user_id')->constrained('users');
+            $table->id();
+            $table->foreignId('candidate_id')->constrained('candidates');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }
