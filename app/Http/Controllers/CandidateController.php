@@ -31,7 +31,11 @@ class CandidateController extends Controller
     {
         $validated = $request->validate([
             'number' => 'required|string|regex:/^[0-9]+$/',
-            'name' => 'required|string',
+            'name' => [
+                'required',
+                'string',
+                'regex:/^[a-zA-Z\s&]+$/'
+            ],
             'vision' => 'required|string',
             'mission' => 'required|string',
             'image_url' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -42,10 +46,8 @@ class CandidateController extends Controller
                 $image = $request->file('image_url');
                 $imageName = time() . '_' . $image->getClientOriginalName();
 
-                // Store in public disk with explicit path
                 $path = $image->storeAs('candidates', $imageName, 'public');
 
-                // Update with the public URL path
                 $validated['image_url'] = '/storage/' . $path;
             }
 
@@ -101,7 +103,12 @@ class CandidateController extends Controller
 
         $validated = $request->validate([
             'number' => 'sometimes|required|string|regex:/^[0-9]+$/',
-            'name' => 'sometimes|required|string',
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'regex:/^[a-zA-Z\s&]+$/'
+            ],
             'vision' => 'sometimes|required|string',
             'mission' => 'sometimes|required|string',
             'image_url' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
@@ -109,20 +116,16 @@ class CandidateController extends Controller
 
         try {
             if ($request->hasFile('image_url')) {
-                // Delete the old image
                 $oldImagePath = str_replace('/storage/', '', $candidate->image_url);
                 if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
                     Storage::disk('public')->delete($oldImagePath);
                 }
 
-                // Store the new image 
                 $image = $request->file('image_url');
                 $imageName = time() . '_' . $image->getClientOriginalName();
 
-                // Store in public disk with explicit path
                 $path = $image->storeAs('candidates', $imageName, 'public');
 
-                // Update with the public URL path
                 $validated['image_url'] = '/storage/' . $path;
             }
 
@@ -157,7 +160,6 @@ class CandidateController extends Controller
             ], 404);
         }
 
-        // Delete the image if it exists
         $imagePath = str_replace('/storage/', '', $candidate->image_url);
         if ($imagePath && Storage::disk('public')->exists($imagePath)) {
             Storage::disk('public')->delete($imagePath);
