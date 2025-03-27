@@ -12,6 +12,7 @@ class Candidate extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'election_id',
         'number',
         'name',
         'vision',
