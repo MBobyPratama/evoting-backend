@@ -5,5 +5,5 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Console\Commands\UpdateElectionStatus;
 
-Schedule::command(UpdateElectionStatus::class)
+Schedule::command('elections:update-status')
     ->everyFiveMinutes();
