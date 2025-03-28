@@ -2,12 +2,22 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\ElectionListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+
+// Election routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('elections', [ElectionListController::class, 'index']);
+    Route::post('elections', [ElectionListController::class, 'store']);
+    Route::get('elections/{id}', [ElectionListController::class, 'show']);
+    Route::post('elections/{id}', [ElectionListController::class, 'update']);
+    Route::delete('elections/{id}', [ElectionListController::class, 'destroy']);
+});
 
 // Candidate routes
 Route::middleware('auth:sanctum')->group(function () {

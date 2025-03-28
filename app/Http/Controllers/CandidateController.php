@@ -30,6 +30,7 @@ class CandidateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'election_id' => 'required|exists:election_lists,id',
             'number' => 'required|string|regex:/^[0-9]+$/',
             'name' => [
                 'required',
@@ -40,6 +41,15 @@ class CandidateController extends Controller
             'mission' => 'required|string',
             'image_url' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        if (Candidate::where('election_id', $validated['election_id'])
+            ->where('number', $validated['number'])
+            ->exists()
+        ) {
+            return response()->json([
+                'message' => 'Candidate number already exists for this election'
+            ], 400);
+        }
 
         try {
             if ($request->hasFile('image_url')) {
@@ -113,6 +123,17 @@ class CandidateController extends Controller
             'mission' => 'sometimes|required|string',
             'image_url' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        if (isset($validated['number']) && $candidate->number !== $validated['number']) {
+            if (Candidate::where('election_id', $candidate->election_id)
+                ->where('number', $validated['number'])
+                ->exists()
+            ) {
+                return response()->json([
+                    'message' => 'Candidate number already exists for this election'
+                ], 400);
+            }
+        }
 
         try {
             if ($request->hasFile('image_url')) {

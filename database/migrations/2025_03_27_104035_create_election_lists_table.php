@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->date('election_date');
-            $table->enum('status', ['active', 'closed', 'upcoming']);
+            $table->enum('status', ['active', 'closed', 'upcoming'])->nullable();
             $table->integer('candidate_count')->default(0);
             $table->integer('voter_count')->default(0);
             $table->timestamps();
