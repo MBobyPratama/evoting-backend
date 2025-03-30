@@ -25,24 +25,24 @@ Route::middleware('auth:sanctum')->group(function () {
 // Election routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/elections', [ElectionListController::class, 'index']);
-    Route::post('/elections', [ElectionListController::class, 'store']);
+    Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['role:admin']);
     Route::get('/elections/{id}', [ElectionListController::class, 'show']);
-    Route::post('/elections/{id}', [ElectionListController::class, 'update']);
-    Route::delete('/elections/{id}', [ElectionListController::class, 'destroy']);
+    Route::post('/elections/{id}', [ElectionListController::class, 'update'])->middleware(['role:admin']);
+    Route::delete('/elections/{id}', [ElectionListController::class, 'destroy'])->middleware(['role:admin']);
 });
 
 // Candidate routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/candidates', [CandidateController::class, 'index']);
-    Route::post('/candidates', [CandidateController::class, 'store']);
+    Route::post('/candidates', [CandidateController::class, 'store'])->middleware(['role:admin']);
     Route::get('/candidates/{id}', [CandidateController::class, 'show']);
-    Route::post('/candidates/{id}', [CandidateController::class, 'update']);
-    Route::delete('/candidates/{id}', [CandidateController::class, 'destroy']);
+    Route::post('/candidates/{id}', [CandidateController::class, 'update'])->middleware(['role:admin']);
+    Route::delete('/candidates/{id}', [CandidateController::class, 'destroy'])->middleware(['role:admin']);
 });
 
 // Vote routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/votes', [VoteController::class, 'store']);
-    Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote']);
-    Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults']);
+    Route::post('/votes', [VoteController::class, 'store'])->middleware(['role:mahasiswa']);
+    Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote'])->middleware(['role:admin']);
+    Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults'])->middleware(['role:admin']);
 });
