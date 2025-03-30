@@ -66,4 +66,20 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ]);
     }
+
+    /**
+     * @authenticated
+     * Logout user and delete token
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Successfully logged out',
+        ]);
+    }
 }

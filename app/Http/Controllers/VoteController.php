@@ -56,7 +56,6 @@ class VoteController extends Controller
         if ($existingVote) {
             return response()->json([
                 'message' => 'You have already voted in this election',
-                'voted_for' => $existingVote->candidate_id
             ], 400);
         }
 
@@ -105,12 +104,15 @@ class VoteController extends Controller
         if ($vote) {
             $candidate = Candidate::find($vote->candidate_id);
 
+            // Hash the candidate number for privacy
+            $hashedNumber = hash('sha256', $candidate->number . config('app.key'));
+
             return response()->json([
                 'has_voted' => true,
                 'candidate' => [
                     'id' => $candidate->id,
                     'name' => $candidate->name,
-                    'number' => $candidate->number,
+                    'number' => $hashedNumber,
                 ]
             ]);
         }
