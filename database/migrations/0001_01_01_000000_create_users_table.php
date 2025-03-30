@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('image_url')->default('/storage/avatars/defaultAvatar.jpg')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'mahasiswa'])->default('user');
             $table->timestamps();
         });
 
