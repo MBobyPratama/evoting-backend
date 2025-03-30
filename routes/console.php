@@ -6,4 +6,4 @@ use Illuminate\Support\Facades\Schedule;
 use App\Console\Commands\UpdateElectionStatus;
 
 Schedule::command('elections:update-status')
-    ->everyFiveMinutes();
+    ->everyMinute();
