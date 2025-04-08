@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Election routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/elections', [ElectionListController::class, 'index']);
-    Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['permission:edit articles']);
+    Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['role:admin,sanctum']);
     Route::get('/elections/{id}', [ElectionListController::class, 'show']);
     Route::post('/elections/{id}', [ElectionListController::class, 'update'])->middleware(['role:admin']);
     Route::delete('/elections/{id}', [ElectionListController::class, 'destroy'])->middleware(['role:admin']);
