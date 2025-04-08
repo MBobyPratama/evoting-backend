@@ -81,7 +81,10 @@ return [
      * ],
      * ```
      */
-    'servers' => null,
+    'servers' => [
+        'Local' => 'api',
+        'Prod' => 'https://evoting-backend-dev-coddqm.laravel.cloud/api',
+    ],
 
     /**
      * Determines how Scramble stores the descriptions of enum cases.
