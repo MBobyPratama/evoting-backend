@@ -81,7 +81,10 @@ return [
      * ],
      * ```
      */
-    'servers' => null,
+    'servers' => [
+        'Local' => 'http://127.0.0.1:8000/api',
+        'Prod' => 'https://evoting-backend-dev-coddqm.laravel.cloud/api',
+    ],
 
     /**
      * Determines how Scramble stores the descriptions of enum cases.
@@ -96,7 +99,7 @@ return [
 
     'middleware' => [
         'web',
-        RestrictedDocsAccess::class,
+        // RestrictedDocsAccess::class,
     ],
 
     'extensions' => [],

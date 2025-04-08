@@ -28,7 +28,11 @@ class AppServiceProvider extends ServiceProvider
                 $openApi->secure(
                     SecurityScheme::http('bearer')
                 );
-            });
+            })
+            ->expose(
+                ui: '/docs/api',
+                document: '/docs/openapi.json',
+            );
 
         config(['app.locale' => 'id']);
         Carbon::setLocale('id');

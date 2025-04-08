@@ -25,24 +25,24 @@ Route::middleware('auth:sanctum')->group(function () {
 // Election routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/elections', [ElectionListController::class, 'index']);
-    Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['role:admin']);
+    Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['role:admin,sanctum']);
     Route::get('/elections/{id}', [ElectionListController::class, 'show']);
-    Route::post('/elections/{id}', [ElectionListController::class, 'update'])->middleware(['role:admin']);
-    Route::delete('/elections/{id}', [ElectionListController::class, 'destroy'])->middleware(['role:admin']);
+    Route::post('/elections/{id}', [ElectionListController::class, 'update'])->middleware(['role:admin,sanctum']);
+    Route::delete('/elections/{id}', [ElectionListController::class, 'destroy'])->middleware(['role:admin,sanctum']);
 });
 
 // Candidate routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/candidates', [CandidateController::class, 'index']);
-    Route::post('/candidates', [CandidateController::class, 'store'])->middleware(['role:admin']);
+    Route::post('/candidates', [CandidateController::class, 'store'])->middleware(['role:admin,sanctum']);
     Route::get('/candidates/{id}', [CandidateController::class, 'show']);
-    Route::post('/candidates/{id}', [CandidateController::class, 'update'])->middleware(['role:admin']);
-    Route::delete('/candidates/{id}', [CandidateController::class, 'destroy'])->middleware(['role:admin']);
+    Route::post('/candidates/{id}', [CandidateController::class, 'update'])->middleware(['role:admin,sanctum']);
+    Route::delete('/candidates/{id}', [CandidateController::class, 'destroy'])->middleware(['role:admin,sanctum']);
 });
 
 // Vote routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/votes', [VoteController::class, 'store'])->middleware(['role:mahasiswa']);
-    Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote'])->middleware(['role:admin']);
-    Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults'])->middleware(['role:admin']);
+    Route::post('/votes', [VoteController::class, 'store'])->middleware(['role:mahasiswa,sanctum']);
+    Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote'])->middleware(['role:admin,sanctum']);
+    Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults'])->middleware(['role:admin,sanctum']);
 });
