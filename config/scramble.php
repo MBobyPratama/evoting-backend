@@ -82,7 +82,7 @@ return [
      * ```
      */
     'servers' => [
-        'Local' => 'api',
+        'Local' => 'http://127.0.0.1:8000/api',
         'Prod' => 'https://evoting-backend-dev-coddqm.laravel.cloud/api',
     ],
 
