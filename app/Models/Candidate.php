@@ -19,4 +19,12 @@ class Candidate extends Model
         'mission',
         'image_url',
     ];
+
+    /**
+     * Get the votes for this candidate.
+     */
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
 }
