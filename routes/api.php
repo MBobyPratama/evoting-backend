@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ElectionListController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoteController;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
+Route::get('/current-election', [ElectionListController::class, 'activeElection']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -45,4 +47,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/votes', [VoteController::class, 'store'])->middleware(['role:mahasiswa,sanctum']);
     Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote'])->middleware(['role:admin,sanctum']);
     Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults'])->middleware(['role:admin,sanctum']);
+});
+
+
+// SSE route for real-time updates
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/dashboard/elections/{id}/live', [DashboardController::class, 'sse_dashboard_detail'])->middleware(['role:admin,sanctum']);
 });

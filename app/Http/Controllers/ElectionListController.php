@@ -210,4 +210,29 @@ class ElectionListController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get the currently active election.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function activeElection()
+    {
+        try {
+            $activeElection = ElectionList::where('status', 'active')->first(['title', 'status']);
+
+            if (!$activeElection) {
+                return response()->json([
+                    'message' => 'No active election found'
+                ], 404);
+            }
+
+            return response()->json(['data' => $activeElection]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch active election',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
