@@ -53,12 +53,13 @@ class AuthController extends Controller
 
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                'message' => 'Unauthorized',
+                'message' => 'Credentials do not match',
             ], 401);
         }
 
         $user = User::where('email', $request->email)->first();
 
+        $user->tokens()->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
