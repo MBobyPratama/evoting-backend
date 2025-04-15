@@ -219,7 +219,7 @@ class ElectionListController extends Controller
     public function activeElection()
     {
         try {
-            $activeElection = ElectionList::where('status', 'active')->first(['id', 'title', 'status']);
+            $activeElection = ElectionList::where('status', 'active')->first(['id', 'title', 'election_date', 'status']);
 
             if (!$activeElection) {
                 return response()->json([
