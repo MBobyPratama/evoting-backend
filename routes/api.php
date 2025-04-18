@@ -49,8 +49,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults'])->middleware(['role:admin,sanctum']);
 });
 
-
-// SSE route for real-time updates
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/dashboard/elections/{id}/live', [DashboardController::class, 'sse_dashboard_detail'])->middleware(['role:admin,sanctum']);
-});
+// Dashboard routes
+Route::get('/dashboard/stream/{electionId}', [DashboardController::class, 'stream'])->middleware('auth:sanctum,role:admin,sanctum');

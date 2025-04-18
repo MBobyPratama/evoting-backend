@@ -12,89 +12,84 @@ use Carbon\Carbon;
 class DashboardController extends Controller
 {
     /**
-     * Stream election details with real-time updates using Server-Sent Events
-     * 
-     * @param int $id Election ID
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * Stream real-time election data using Server-Sent Events
+     *
+     * @param int $electionId
+     * @return void
      */
-    public function sse_dashboard_detail($id)
+    public function stream($electionId)
     {
-        // Find the election
-        $election = ElectionList::find($id);
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+        header('Connection: keep-alive');
+        header('X-Accel-Buffering: no'); // Disable buffering for Nginx
+
+        // Set time limit to unlimited for long-running connection
+        set_time_limit(0);
+
+        // Send data every 2 seconds
+        while (true) {
+            $eventData = [
+                'data' => $this->getElectionData($electionId)
+            ];
+
+            echo "data: " . json_encode($eventData) . "\n\n";
+            ob_flush();
+            flush();
+
+            // Sleep for 2 seconds before sending next update
+            sleep(2);
+        }
+    }
+
+    /**
+     * Get election data with real-time vote counts
+     *
+     * @param int $electionId
+     * @return array
+     */
+    private function getElectionData($electionId)
+    {
+        // Get the election
+        $election = ElectionList::find($electionId);
+
         if (!$election) {
-            return response()->json([
-                'message' => 'Election not found'
-            ], 404);
+            return ['error' => 'Election not found'];
         }
 
-        // Set SSE response headers
-        $response = response()->stream(function () use ($election) {
-            // Set initial time for comparison
-            $lastUpdate = now();
+        // Get all candidates for this election with their vote counts
+        $candidates = Candidate::where('election_id', $electionId)->get();
+        $candidatesData = [];
 
-            // Keep the connection open
-            while (true) {
-                // Clear output buffer to prevent memory issues
-                ob_end_flush();
+        foreach ($candidates as $candidate) {
+            // Count votes for this candidate
+            $voteCount = Vote::where('candidate_id', $candidate->id)->count();
 
-                // Get latest voter count
-                $voterCount = Vote::where('election_id', $election->id)
-                    ->distinct('user_id')
-                    ->count('user_id');
+            $candidatesData[] = [
+                'id' => $candidate->id,
+                'name' => $candidate->name,
+                'number' => $candidate->number,
+                'votes' => $voteCount
+            ];
+        }
 
-                // Get candidates with their vote counts
-                $candidates = Candidate::where('election_id', $election->id)
-                    ->get()
-                    ->map(function ($candidate) {
-                        $voteCount = Vote::where('candidate_id', $candidate->id)->count();
-                        return [
-                            'candidate_id' => $candidate->id,
-                            'name' => $candidate->name,
-                            'image_url' => $candidate->image_url,
-                            'vote_count' => $voteCount
-                        ];
-                    });
+        // Count total voters for this election (distinct users who voted)
+        $voterCount = Vote::where('election_id', $electionId)
+            ->distinct('user_id')
+            ->count('user_id');
 
-                // Get election status
-                $today = Carbon::now();
-                $electionDate = Carbon::parse($election->election_date);
+        // Format election date
+        $formattedDate = Carbon::parse($election->election_date)
+            ->translatedFormat('l, d F Y');
 
-                $status = 'upcoming';
-                if ($today->isSameDay($electionDate)) {
-                    $status = 'active';
-                } elseif ($today->isAfter($electionDate)) {
-                    $status = 'closed';
-                }
-
-                // Create the data payload
-                $data = [
-                    'election_id' => $election->id,
-                    'title' => $election->title,
-                    'election_date' => Carbon::parse($election->election_date)->translatedFormat('l, d F Y'),
-                    'status' => $status,
-                    'voter_count' => $voterCount,
-                    'candidates' => $candidates,
-                    'timestamp' => now()->toIso8601String()
-                ];
-
-                // Send the SSE data
-                echo "event: election_update\n";
-                echo "data: " . json_encode($data) . "\n\n";
-
-                // Flush the output buffer
-                flush();
-
-                // Sleep for a short time to prevent high CPU usage
-                // Adjust this value based on your needs
-                sleep(2);
-            }
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache',
-            'Connection' => 'keep-alive',
-            'X-Accel-Buffering' => 'no' // Disable buffering for Nginx
-        ]);
-
-        return $response;
+        // Compile the final data structure
+        return [
+            'election_id' => $election->id,
+            'title' => $election->title,
+            'election_date' => $formattedDate,
+            'status' => $election->status,
+            'voter_count' => $voterCount,
+            'candidates' => $candidatesData
+        ];
     }
 }
