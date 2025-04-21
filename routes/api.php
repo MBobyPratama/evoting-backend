@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/elections', [ElectionListController::class, 'index']);
     Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['role:admin,sanctum']);
-    Route::get('/elections/{id}', [ElectionListController::class, 'show']);
+    Route::get('/elections/{id}', [ElectionListController::class, 'show'])->middleware(['role:admin,sanctum']);
     Route::post('/elections/{id}', [ElectionListController::class, 'update'])->middleware(['role:admin,sanctum']);
     Route::delete('/elections/{id}', [ElectionListController::class, 'destroy'])->middleware(['role:admin,sanctum']);
 });

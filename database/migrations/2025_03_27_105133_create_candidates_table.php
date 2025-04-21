@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('election_id')->constrained('election_lists');
             $table->string('number');
             $table->text('name');
-            $table->string('vision');
-            $table->string('mission');
-            $table->string('image_url');
+            $table->text('vision');
+            $table->text('mission');
+            $table->text('image_url');
             $table->timestamps();
         });
     }
