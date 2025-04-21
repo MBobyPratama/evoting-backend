@@ -181,15 +181,33 @@ class CandidateController extends Controller
             ], 404);
         }
 
-        $imagePath = str_replace('/storage/', '', $candidate->image_url);
-        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-            Storage::disk('public')->delete($imagePath);
+        // Begin database transaction
+        \Illuminate\Support\Facades\DB::beginTransaction();
+
+        try {
+            // Delete related votes first
+            \App\Models\Vote::where('candidate_id', $candidate->id)->delete();
+
+            $imagePath = str_replace('/storage/', '', $candidate->image_url);
+            if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            $candidate->delete();
+
+            \Illuminate\Support\Facades\DB::commit();
+
+            return response()->json([
+                'message' => 'Candidate and related votes deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            // Rollback in case of error
+            \Illuminate\Support\Facades\DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to delete candidate',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $candidate->delete();
-
-        return response()->json([
-            'message' => 'Candidate deleted successfully'
-        ]);
     }
 }

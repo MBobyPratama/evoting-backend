@@ -112,10 +112,25 @@ class ElectionListController extends Controller
         $election->voter_count = Vote::where('election_id', $election->id)
             ->distinct('user_id')->count('user_id');
 
+        // Get candidates with their vote counts
+        $candidates = Candidate::where('election_id', $election->id)->get();
+        $candidatesWithVotes = [];
+
+        foreach ($candidates as $candidate) {
+            $voteCount = Vote::where('candidate_id', $candidate->id)->count();
+            $candidatesWithVotes[] = [
+                'id' => $candidate->id,
+                'number' => $candidate->number,
+                'name' => $candidate->name,
+                'vote_count' => $voteCount
+            ];
+        }
+
         // Format date for response
         $formattedElection = $election->toArray();
         $formattedElection['election_date'] = Carbon::parse($election->election_date)
             ->translatedFormat('l, d F Y');
+        $formattedElection['candidates'] = $candidatesWithVotes;
 
         return response()->json(['data' => $formattedElection]);
     }

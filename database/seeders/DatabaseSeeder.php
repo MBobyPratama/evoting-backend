@@ -39,5 +39,13 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('string'),
             'image_url' => '/storage/avatars/defaultAvatar.jpg',
         ])->assignRole('mahasiswa');
+
+        User::factory()->create([
+            'name' => 'Test User Mahasiswa 2',
+            'nim' => '2310512058',
+            'email' => 'mahasiswa2@example.com',
+            'password' => bcrypt('string'),
+            'image_url' => '/storage/avatars/defaultAvatar.jpg',
+        ])->assignRole('mahasiswa');
     }
 }
