@@ -55,6 +55,14 @@ class ElectionListController extends Controller
             'election_date' => 'required|date',
         ]);
 
+        // Check if there's already an election scheduled on this date
+        $existingElection = ElectionList::whereDate('election_date', $validated['election_date'])->first();
+        if ($existingElection) {
+            return response()->json([
+                'message' => 'An election is already scheduled on this date'
+            ], 400);
+        }
+
         // Set counts to 0 by default
         $validated['candidate_count'] = 0;
         $validated['voter_count'] = 0;
@@ -156,6 +164,19 @@ class ElectionListController extends Controller
             'title' => 'sometimes|required|string|max:255',
             'election_date' => 'sometimes|required|date',
         ]);
+
+        // Check if trying to update to a date that already has an election
+        if (isset($validated['election_date'])) {
+            $existingElection = ElectionList::where('id', '!=', $id)
+                ->whereDate('election_date', $validated['election_date'])
+                ->first();
+
+            if ($existingElection) {
+                return response()->json([
+                    'message' => 'Another election is already scheduled for this date'
+                ], 400);
+            }
+        }
 
         try {
             $election->update($validated);

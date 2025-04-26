@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Candidate;
+use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -209,5 +210,36 @@ class CandidateController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Display a listing of candidates for mahasiswa.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function indexForMahasiswa()
+    {
+        $candidates = Candidate::all();
+
+        return response()->json(['data' => $candidates]);
+    }
+
+    /**
+     * Display the specified candidate for mahasiswa.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showForMahasiswa($id)
+    {
+        $candidate = Candidate::find($id);
+
+        if (!$candidate) {
+            return response()->json([
+                'message' => 'Candidate not found'
+            ], 404);
+        }
+
+        return response()->json(['data' => $candidate]);
     }
 }
