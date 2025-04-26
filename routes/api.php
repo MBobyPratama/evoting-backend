@@ -24,22 +24,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
 });
 
-// Election routes
+// Election routes admin
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/elections', [ElectionListController::class, 'index']);
+    Route::get('/elections', [ElectionListController::class, 'index'])->middleware(['role:admin,sanctum']);
     Route::post('/elections', [ElectionListController::class, 'store'])->middleware(['role:admin,sanctum']);
     Route::get('/elections/{id}', [ElectionListController::class, 'show'])->middleware(['role:admin,sanctum']);
     Route::post('/elections/{id}', [ElectionListController::class, 'update'])->middleware(['role:admin,sanctum']);
     Route::delete('/elections/{id}', [ElectionListController::class, 'destroy'])->middleware(['role:admin,sanctum']);
 });
 
-// Candidate routes
+// Candidate routes admin
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/candidates', [CandidateController::class, 'index']);
+    Route::get('/candidates', [CandidateController::class, 'index'])->middleware(['role:admin,sanctum']);
     Route::post('/candidates', [CandidateController::class, 'store'])->middleware(['role:admin,sanctum']);
-    Route::get('/candidates/{id}', [CandidateController::class, 'show']);
+    Route::get('/candidates/{id}', [CandidateController::class, 'show'])->middleware(['role:admin,sanctum']);
     Route::post('/candidates/{id}', [CandidateController::class, 'update'])->middleware(['role:admin,sanctum']);
     Route::delete('/candidates/{id}', [CandidateController::class, 'destroy'])->middleware(['role:admin,sanctum']);
+});
+
+// Candidate routes mahasiswa
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/mahasiswa/candidates', [CandidateController::class, 'indexForMahasiswa'])->middleware(['role:mahasiswa,sanctum']);
+    Route::get('/mahasiswa/candidates/{id}', [CandidateController::class, 'showForMahasiswa'])->middleware(['role:mahasiswa,sanctum']);
 });
 
 // Vote routes
