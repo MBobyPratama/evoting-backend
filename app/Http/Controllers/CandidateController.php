@@ -40,7 +40,7 @@ class CandidateController extends Controller
             ],
             'vision' => 'required|string',
             'mission' => 'required|string',
-            'image_url' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image_url' => 'required|image|mimes:jpeg,png,jpg|max:3048',
         ]);
 
         if (Candidate::where('election_id', $validated['election_id'])

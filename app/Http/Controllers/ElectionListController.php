@@ -161,7 +161,7 @@ class ElectionListController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
+            'title' => 'sometimes|required|string',
             'election_date' => 'sometimes|required|date',
         ]);
 

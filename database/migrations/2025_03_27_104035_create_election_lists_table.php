@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('election_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->text('title');
             $table->date('election_date');
             $table->enum('status', ['active', 'closed', 'upcoming'])->nullable();
             $table->integer('candidate_count')->default(0);
