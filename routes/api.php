@@ -44,16 +44,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Candidate routes mahasiswa
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/mahasiswa/candidates', [CandidateController::class, 'indexForMahasiswa'])->middleware(['role:mahasiswa,sanctum']);
-    Route::get('/mahasiswa/candidates/{id}', [CandidateController::class, 'showForMahasiswa'])->middleware(['role:mahasiswa,sanctum']);
+    Route::get('/mahasiswa/candidates', [CandidateController::class, 'indexForMahasiswa'])->middleware(['role:mahasiswa|admin,sanctum']);
+    Route::get('/mahasiswa/candidates/{id}', [CandidateController::class, 'showForMahasiswa'])->middleware(['role:mahasiswa|admin,sanctum']);
 });
 
 // Vote routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/votes', [VoteController::class, 'store'])->middleware(['role:mahasiswa,sanctum']);
-    Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote'])->middleware(['role:admin,sanctum']);
+    Route::get('/votes/check/{electionId}', [VoteController::class, 'checkVote']);
     Route::get('/votes/results/{electionId}', [VoteController::class, 'getResults'])->middleware(['role:admin,sanctum']);
 });
 
 // Dashboard routes
-Route::get('/dashboard/stream/{electionId}', [DashboardController::class, 'stream'])->middleware('auth:sanctum,role:admin,sanctum');
+Route::get('/dashboard/stream/{electionId}', [DashboardController::class, 'stream']);

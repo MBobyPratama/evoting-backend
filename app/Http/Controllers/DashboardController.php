@@ -8,6 +8,7 @@ use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
@@ -18,29 +19,44 @@ class DashboardController extends Controller
      * @return void
      */
     public function stream($electionId)
-    {
-        header('Content-Type: text/event-stream');
-        header('Cache-Control: no-cache');
-        header('Connection: keep-alive');
-        header('X-Accel-Buffering: no'); // Disable buffering for Nginx
+{
+    // Set SSE-specific headers
+    header('Content-Type: text/event-stream');
+    header("Access-Control-Allow-Origin: " . env('WEBSITE_URL')); //nanti ganti sesuai domain nya 
+    header("Access-Control-Allow-Headers: *");
+    header('Cache-Control: no-cache');
+    header('Connection: keep-alive');
+    header('X-Accel-Buffering: no'); // Disable Nginx buffering
 
-        // Set time limit to unlimited for long-running connection
-        set_time_limit(0);
+    // Disable PHP output buffering
+    while (ob_get_level() > 0) ob_end_flush();
+    ob_implicit_flush(true);
 
-        // Send data every 2 seconds
-        while (true) {
-            $eventData = [
-                'data' => $this->getElectionData($electionId)
-            ];
+    // Optional: Set retry delay (client will retry after 5 seconds if disconnected)
+    echo "retry: 5000\n\n";
 
-            echo "data: " . json_encode($eventData) . "\n\n";
-            ob_flush();
-            flush();
+    // Keep the script running
+    set_time_limit(0);
 
-            // Sleep for 2 seconds before sending next update
-            sleep(2);
+    while (true) {
+        // Break the loop if client disconnects
+        if (connection_aborted()) {
+            break;
         }
+
+        // Get data and send it
+        $data = [
+             'data' => $this->getElectionData($electionId)
+        ];
+
+        echo "data: " . json_encode($data) . "\n\n";
+        ob_flush();
+        flush();
+
+        // Wait before sending the next update
+        sleep(2);
     }
+}
 
     /**
      * Get election data with real-time vote counts
