@@ -57,3 +57,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Dashboard routes
 Route::get('/dashboard/stream/{electionId}', [DashboardController::class, 'stream']);
+Route::get('/dashboard/election/{electionId}/hourly-data', [DashboardController::class, 'streamHourlyData']);
